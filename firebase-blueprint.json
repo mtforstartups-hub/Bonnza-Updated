@@ -1,0 +1,152 @@
+{
+  "entities": {
+    "AdminProfile": {
+      "title": "AdminProfile",
+      "description": "Authorized Bonnza staff member with assigned RBAC role",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 254
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "OWNER",
+            "ADMIN",
+            "CONTENT_EDITOR",
+            "WEBINAR_OPERATOR",
+            "FACULTY_REVIEWER",
+            "SUPPORT_AGENT",
+            "LEARNER"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "WebinarRegistrationMirror": {
+      "title": "WebinarRegistrationMirror",
+      "description": "Synchronized registration record owned by a learner or managed by Bonnza staff",
+      "type": "object",
+      "properties": {
+        "registrationReference": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "sessionId": {
+          "type": "string",
+          "enum": [
+            "bonnza-2026-12-05-en-1300",
+            "bonnza-2026-12-05-hi-1600"
+          ]
+        },
+        "paymentState": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "PAYMENT_INITIATED",
+            "PENDING_VERIFICATION",
+            "PAID_CONFIRMED",
+            "PAYMENT_FAILED",
+            "EXPIRED",
+            "REFUND_PENDING",
+            "REFUNDED",
+            "CHARGEBACK",
+            "MANUAL_REVIEW"
+          ]
+        },
+        "amountPaise": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "registrationReference",
+        "ownerUid",
+        "sessionId",
+        "paymentState",
+        "amountPaise",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AuditLogEntry": {
+      "title": "AuditLogEntry",
+      "description": "Immutable operational audit trail entry created by verified staff",
+      "type": "object",
+      "properties": {
+        "actorUid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "action": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "targetType": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "targetId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "actorUid",
+        "action",
+        "targetType",
+        "targetId",
+        "summary",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/admins/{adminUid}": {
+      "schema": { "$ref": "#/entities/AdminProfile" },
+      "description": "Authorized Bonnza staff accounts indexed by Firebase Auth UID"
+    },
+    "/registrations/{registrationId}": {
+      "schema": { "$ref": "#/entities/WebinarRegistrationMirror" },
+      "description": "Learner registration status mirror records"
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLogEntry" },
+      "description": "Immutable staff audit logs"
+    }
+  }
+}

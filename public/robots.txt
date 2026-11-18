@@ -1,0 +1,4 @@
+# Pre-launch default: indexing disabled until editorial review and production readiness.
+# Enable public crawling only when PUBLIC_INDEXING_ENABLED=true and approved sitemap is generated.
+User-agent: *
+Disallow: /
